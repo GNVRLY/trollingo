@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "trollingo"
+version = "0.1.0"
+description = "Mini Duolingo clone for studies"
+authors = ["GNVRLY <m.karwacikk@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.13,<3.14"
+django = "^6.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
