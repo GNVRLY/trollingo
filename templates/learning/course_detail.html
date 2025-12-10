@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{ course.name }}</h2>
+
+{% if course.description %}
+    <p>{{ course.description }}</p>
+{% endif %}
+
+<h3>Lessons</h3>
+{% if course.lessons.all %}
+    <ul>
+        {% for lesson in course.lessons.all %}
+            <li>
+                <a href="{% url 'learning:lesson_detail' lesson.pk %}">
+                    {{ lesson.order }}. {{ lesson.title }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No lessons in this course yet.</p>
+{% endif %}
+
+<a href="{% url 'learning:course_list' %}">Back to courses</a>
+{% endblock %}

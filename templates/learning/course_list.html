@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Courses</h2>
+
+{% if courses %}
+    <ul>
+        {% for course in courses %}
+            <li>
+                <a href="{% url 'learning:course_detail' course.pk %}">
+                    {{ course.name }}
+                </a>
+                {% if course.description %}
+                    – {{ course.description }}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No courses yet.</p>
+{% endif %}
+{% endblock %}

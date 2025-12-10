@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Trollingo</title>
+</head>
+<body>
+<header>
+    <h1><a href="{% url 'learning:course_list' %}">Trollingo</a></h1>
+    <hr>
+</header>
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+</body>
+</html>
