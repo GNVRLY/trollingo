@@ -12,27 +12,33 @@ class Course(models.Model):
 
 class Lesson(models.Model):
     class Level(models.TextChoices):
-        A1 = "A1", "A1 – początkujący"
-        A2 = "A2", "A2 – podstawowy"
-        B1 = "B1", "B1 – średnio zaawansowany"
-        B2 = "B2", "B2 – wyższy średnio"
-        C1 = "C1", "C1 – zaawansowany"
-        C2 = "C2", "C2 – biegły"
+        A1 = "A1", "A1 – Beginner"
+        A2 = "A2", "A2 – Elementary"
+        B1 = "B1", "B1 – Intermediate"
+        B2 = "B2", "B2 – Upper Intermediate"
+        C1 = "C1", "C1 – Advanced"
+        C2 = "C2", "C2 – Proficient"
 
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="lessons")
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        related_name="lessons"
+    )
     title = models.CharField(max_length=100)
     order = models.PositiveIntegerField(default=1)
+
     level = models.CharField(
         max_length=2,
         choices=Level.choices,
-        default=Level.A1,
+        default=Level.A1
     )
 
     class Meta:
         ordering = ["level", "order"]
 
     def __str__(self):
-        return f"{self.course.name} – {self.title} ({self.level})"
+        return f"{self.title} ({self.level})"
+
 
 
 
