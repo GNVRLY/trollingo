@@ -32,7 +32,13 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-### 5. Łodpalamy
+### 6. Ładujemy baze danych rekordami
+```
+python manage.py load_demo_data
+```
+
+### 7. Łodpalamy
 ```
 python manage.py runserver
 ```
+
