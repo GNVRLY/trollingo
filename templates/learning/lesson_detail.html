@@ -4,11 +4,13 @@
 <h2>{{ lesson.title }}</h2>
 
 <p>Course: {{ lesson.course.name }}</p>
-
+<p>Level: {{ lesson.level }}</p>
 <p>Number of questions: {{ lesson.questions.count }}</p>
 
 <p>
-    (to później dodamy (logike pytan itp blebleble)).)
+    <a href="{% url 'learning:lesson_quiz' lesson.pk %}">
+        Start quiz
+    </a>
 </p>
 
 <a href="{% url 'learning:course_detail' lesson.course.pk %}">Back to course</a>

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Quiz: {{ lesson.title }}</h2>
+
+<p>Course: {{ lesson.course.name }} | Level: {{ lesson.level }}</p>
+
+{% if score is not None %}
+    <h3>Your result: {{ score }} / {{ total }}</h3>
+    <hr>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+
+    {% for question in questions %}
+        <div style="margin-bottom: 1.5rem;">
+            <p><strong>{{ forloop.counter }}. {{ question.text }}</strong></p>
+
+            {% for answer in question.answers.all %}
+                <label style="display: block;">
+                    <input
+                        type="radio"
+                        name="question_{{ question.id }}"
+                        value="{{ answer.id }}"
+                        {% if user_answers.question.id == answer.id %}checked{% endif %}
+                    >
+                    {{ answer.text }}
+                </label>
+            {% endfor %}
+        </div>
+    {% endfor %}
+
+    <button type="submit">Submit answers</button>
+</form>
+
+<p>
+    <a href="{% url 'learning:lesson_detail' lesson.pk %}">Back to lesson</a>
+</p>
+{% endblock %}
