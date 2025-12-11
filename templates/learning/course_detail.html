@@ -7,10 +7,14 @@
     <p>{{ course.description }}</p>
 {% endif %}
 
-<h3>Lessons</h3>
-{% if course.lessons.all %}
+<h3>Lessons by level</h3>
+
+{% regroup course.lessons.all by level as levels %}
+
+{% for group in levels %}
+    <h4>{{ group.grouper }}</h4>
     <ul>
-        {% for lesson in course.lessons.all %}
+        {% for lesson in group.list %}
             <li>
                 <a href="{% url 'learning:lesson_detail' lesson.pk %}">
                     {{ lesson.order }}. {{ lesson.title }}
@@ -18,9 +22,7 @@
             </li>
         {% endfor %}
     </ul>
-{% else %}
-    <p>No lessons in this course yet.</p>
-{% endif %}
+{% endfor %}
 
 <a href="{% url 'learning:course_list' %}">Back to courses</a>
 {% endblock %}
