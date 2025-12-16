@@ -71,3 +71,4 @@ class UserLessonProgress(models.Model):
     def __str__(self):
         return f"{self.user} – {self.lesson} – {self.score} pkt"
 
+

@@ -23,11 +23,21 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            messages.warning(
-                request,
-                "Zaloguj się, aby kontynuować."
-            )
+            messages.warning(request, "Zaloguj się, aby kontynuować.")
         return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        progresses = UserLessonProgress.objects.filter(
+            user=self.request.user,
+            lesson__course=self.object
+        )
+        progress_map = {
+            p.lesson_id: p for p in progresses
+        }
+
+        context["progress_map"] = progress_map
+        return context
 
 
 class LessonDetailView(DetailView):
