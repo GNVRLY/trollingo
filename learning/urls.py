@@ -8,4 +8,9 @@ urlpatterns = [
     path("course/<int:pk>/", views.CourseDetailView.as_view(), name="course_detail"),
     path("lesson/<int:pk>/", views.LessonDetailView.as_view(), name="lesson_detail"),
     path("lesson/<int:pk>/quiz/", views.lesson_quiz, name="lesson_quiz"),
+
+    # AUTH
+    path("register/", views.register, name="register"),
+    path("login/", views.user_login, name="login"),
+    path("logout/", views.user_logout, name="logout"),
 ]
