@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load extras %}
 
 {% block content %}
 <h2>{{ course.name }}</h2>
@@ -19,6 +20,12 @@
                 <a href="{% url 'learning:lesson_detail' lesson.pk %}">
                     {{ lesson.order }}. {{ lesson.title }}
                 </a>
+
+                {% if progress_map and lesson.id in progress_map %}
+                    <span style="color: green; font-weight: bold;">
+                        ✔ ukończono ({{ progress_map|get_score:lesson.id }} pkt)
+                    </span>
+                {% endif %}
             </li>
         {% endfor %}
     </ul>
