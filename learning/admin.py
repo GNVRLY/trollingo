@@ -18,8 +18,9 @@ class LessonAdmin(admin.ModelAdmin):
     list_display = ("title", "course", "level", "order")
     list_filter = ("course", "level")
     ordering = ("course", "level", "order")
-
+    fields = ("course", "title", "level", "order", "content")
 
 admin.site.register(Course)
 admin.site.register(Answer)
 admin.site.register(UserLessonProgress)
+

@@ -3,9 +3,18 @@
 {% block content %}
 <h2>{{ lesson.title }}</h2>
 
-<p>Course: {{ lesson.course.name }}</p>
-<p>Level: {{ lesson.level }}</p>
-<p>Number of questions: {{ lesson.questions.count }}</p>
+<p>Course: {{ lesson.course.name }} | Level: {{ lesson.level }}</p>
+
+{% if lesson.content %}
+    <h3>Lesson content</h3>
+    <div style="white-space: pre-wrap;">
+        {{ lesson.content }}
+    </div>
+{% else %}
+    <p><em>No lesson content yet.</em></p>
+{% endif %}
+
+<hr>
 
 <p>
     <a href="{% url 'learning:lesson_quiz' lesson.pk %}">
