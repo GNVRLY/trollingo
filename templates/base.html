@@ -7,10 +7,27 @@
 <body>
 <header>
     <h1><a href="{% url 'learning:course_list' %}">Trollingo</a></h1>
+    <div>
+        {% if user.is_authenticated %}
+            Zalogowany jako <strong>{{ user.username }}</strong> |
+            <a href="{% url 'learning:logout' %}">Wyloguj</a>
+        {% else %}
+            <a href="{% url 'learning:login' %}">Zaloguj</a> |
+            <a href="{% url 'learning:register' %}">Zarejestruj</a>
+        {% endif %}
+    </div>
     <hr>
 </header>
 
 <main>
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
     {% block content %}{% endblock %}
 </main>
 </body>
