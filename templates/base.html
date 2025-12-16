@@ -6,19 +6,35 @@
 </head>
 <body>
 <header>
-    <h1><a href="{% url 'learning:course_list' %}">Trollingo</a></h1>
-    <div>
-        {% if user.is_authenticated %}
-            Zalogowany jako <strong>{{ user.username }}</strong> |
-            <a href="{% url 'learning:logout' %}">Wyloguj</a>
-        {% else %}
-            <a href="{% url 'learning:login' %}">Zaloguj</a> |
-            <a href="{% url 'learning:register' %}">Zarejestruj</a>
-        {% endif %}
-    </div>
+    <h1><a href="{% url 'learning:home' %}">Trollingo</a></h1>
+
+    {% if user.is_authenticated %}
+        <div>
+            Zalogowany jako <strong>{{ user.username }}</strong>
+            | Level: <strong>{{ user.profile.level }}</strong>
+            | XP: <strong>{{ user.profile.xp }}</strong>
+        </div>
+
+        <div style="margin-top: 8px; max-width: 320px;">
+            <div style="font-size: 12px;">
+                {{ user.profile.xp_in_level }}/100 XP (do następnego: {{ user.profile.xp_to_next_level }})
+            </div>
+
+            <div style="border: 1px solid #333; height: 14px; width: 100%; margin-top: 4px;">
+                <div style="height: 14px; width: {{ user.profile.xp_progress_percent }}%; background: #2ecc71;"></div>
+            </div>
+        </div>
+
+        <p><a href="{% url 'learning:logout' %}">Wyloguj</a></p>
+    {% else %}
+        <p>
+            <a href="{% url 'learning:login' %}">Zaloguj się</a> |
+            <a href="{% url 'learning:register' %}">Załóż konto</a>
+        </p>
+    {% endif %}
+
     <hr>
 </header>
-
 <main>
     {% if messages %}
         <ul>

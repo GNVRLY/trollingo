@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Trollingo</h1>
+
+<p>
+    Trollingo to prosta aplikacja do nauki języka angielskiego
+    poprzez lekcje i quizy – inspirowana Duolingo.
+</p>
+
+<h3>Jak to działa?</h3>
+<ul>
+    <li>Uczysz się słówek i zwrotów w lekcjach</li>
+    <li>Po każdej lekcji rozwiązujesz quiz</li>
+    <li>Zdobywasz XP i levele</li>
+    <li>Twój postęp jest zapisywany</li>
+</ul>
+
+<hr>
+
+<h3>Zacznij naukę</h3>
+
+<p>
+    <a href="{% url 'learning:login' %}">➡ Zaloguj się</a>
+</p>
+
+<p>
+    <a href="{% url 'learning:register' %}">🆕 Załóż konto</a>
+</p>
+{% endblock %}

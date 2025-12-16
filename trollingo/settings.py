@@ -37,8 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
-    "learning",
+    "learning.apps.LearningConfig",
 ]
 
 MIDDLEWARE = [
@@ -118,3 +117,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+LOGIN_URL = "learning:login"
+LOGIN_REDIRECT_URL = "learning:course_list"
+LOGOUT_REDIRECT_URL = "learning:home"

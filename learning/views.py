@@ -1,18 +1,24 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView, DetailView
 from django.contrib import messages
 from django.contrib.auth import login, logout
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.generic import DetailView, ListView
 
+from .models import Answer, Course, Lesson, UserLessonProgress
 
-from .models import Course, Lesson, Question, Answer, UserLessonProgress
-class CourseListView(ListView):
+def home(request):
+    if request.user.is_authenticated:
+        return redirect("learning:course_list")
+    return render(request, "learning/home.html")
+
+class CourseListView(LoginRequiredMixin, ListView):
     model = Course
     template_name = "learning/course_list.html"
     context_object_name = "courses"
+    login_url = "learning:login"
 
 
 class CourseDetailView(LoginRequiredMixin, DetailView):
@@ -28,31 +34,36 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
         progresses = UserLessonProgress.objects.filter(
             user=self.request.user,
-            lesson__course=self.object
+            lesson__course=self.object,
         )
-        progress_map = {
-            p.lesson_id: p for p in progresses
-        }
 
-        context["progress_map"] = progress_map
+        context["progress_map"] = {p.lesson_id: p for p in progresses}
         return context
 
 
-class LessonDetailView(DetailView):
+class LessonDetailView(LoginRequiredMixin, DetailView):
     model = Lesson
     template_name = "learning/lesson_detail.html"
     context_object_name = "lesson"
+    login_url = "learning:login"
 
 
-@login_required
+@login_required(login_url="learning:login")
 def lesson_quiz(request, pk):
     lesson = get_object_or_404(Lesson, pk=pk)
     questions = lesson.questions.prefetch_related("answers")
 
-    score = None
     total = questions.count()
+    XP_PER_POINT = 10
+
+    all_lessons = list(
+        Lesson.objects.filter(course=lesson.course).order_by("level", "order", "id")
+    )
+    idx = next((i for i, l in enumerate(all_lessons) if l.id == lesson.id), None)
+    next_lesson = all_lessons[idx + 1] if idx is not None and idx + 1 < len(all_lessons) else None
 
     if request.method == "POST":
         correct = 0
@@ -60,7 +71,6 @@ def lesson_quiz(request, pk):
         for question in questions:
             field_name = f"question_{question.id}"
             answer_id = request.POST.get(field_name)
-
             if not answer_id:
                 continue
 
@@ -73,20 +83,52 @@ def lesson_quiz(request, pk):
                 correct += 1
 
         score = correct
+        new_xp = score * XP_PER_POINT
 
-        UserLessonProgress.objects.update_or_create(
-            user=request.user,
-            lesson=lesson,
-            defaults={"score": score},
+        with transaction.atomic():
+            existing = UserLessonProgress.objects.filter(user=request.user, lesson=lesson).first()
+            old_score = existing.score if existing else 0
+            old_xp = old_score * XP_PER_POINT
+
+            UserLessonProgress.objects.update_or_create(
+                user=request.user,
+                lesson=lesson,
+                defaults={"score": score},
+            )
+
+            profile = request.user.profile
+            old_level = profile.level
+
+            delta_xp = max(new_xp - old_xp, 0)
+            profile.xp += delta_xp
+            profile.save()
+
+            new_level = profile.level
+            level_up = new_level > old_level
+
+        return render(
+            request,
+            "learning/lesson_quiz_result.html",
+            {
+                "lesson": lesson,
+                "score": score,
+                "total": total,
+                "delta_xp": delta_xp,
+                "next_lesson": next_lesson,
+                "level_up": level_up,
+                "new_level": new_level,
+            },
         )
 
-    context = {
-        "lesson": lesson,
-        "questions": questions,
-        "score": score,
-        "total": total,
-    }
-    return render(request, "learning/lesson_quiz.html", context)
+    return render(
+        request,
+        "learning/lesson_quiz.html",
+        {
+            "lesson": lesson,
+            "questions": questions,
+            "total": total,
+        },
+    )
 
 def register(request):
     if request.user.is_authenticated:
@@ -119,5 +161,4 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     messages.info(request, "Wylogowano.")
-    return redirect("learning:course_list")
-
+    return redirect("learning:home")

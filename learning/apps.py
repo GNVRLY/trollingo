@@ -2,4 +2,8 @@ from django.apps import AppConfig
 
 
 class LearningConfig(AppConfig):
-    name = 'learning'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "learning"
+
+    def ready(self):
+        import learning.signals  # noqa
