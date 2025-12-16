@@ -73,3 +73,25 @@ class UserLessonProgress(models.Model):
         return f"{self.user} – {self.lesson} – {self.score} pkt"
 
 
+class Profile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profile")
+    xp = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.user.username} ({self.xp} XP)"
+
+    @property
+    def level(self) -> int:
+        return (self.xp // 100) + 1
+
+    @property
+    def xp_in_level(self) -> int:
+        return self.xp % 100
+
+    @property
+    def xp_to_next_level(self) -> int:
+        return 100 - self.xp_in_level
+
+    @property
+    def xp_progress_percent(self) -> int:
+        return self.xp_in_level

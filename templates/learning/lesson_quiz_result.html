@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Quiz ukończony</h2>
+
+<p><strong>Lekcja:</strong> {{ lesson.title }} ({{ lesson.level }})</p>
+<p><strong>Wynik:</strong> {{ score }} / {{ total }}</p>
+<p><strong>XP:</strong> +{{ delta_xp }}</p>
+
+<hr>
+
+<p>
+    <a href="{% url 'learning:course_detail' lesson.course.pk %}">⬅ Powrót do kursu</a>
+</p>
+
+{% if next_lesson %}
+<p>
+    <a href="{% url 'learning:lesson_detail' next_lesson.pk %}">➡ Następna lekcja</a>
+</p>
+    {% if level_up %}
+    <h3>🎉 Level up! Masz teraz level {{ new_level }}!</h3>
+{% endif %}
+
+{% else %}
+<p><em>To była ostatnia lekcja w tym kursie.</em></p>
+{% endif %}
+{% endblock %}
