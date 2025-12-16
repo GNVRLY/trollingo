@@ -32,6 +32,7 @@ class Lesson(models.Model):
         choices=Level.choices,
         default=Level.A1
     )
+    content = models.TextField(blank=True, default="")
 
     class Meta:
         ordering = ["level", "order"]
