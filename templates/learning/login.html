@@ -1,13 +1,36 @@
 {% extends "base.html" %}
 
+{% block title %}Logowanie — Trollingo{% endblock %}
+
 {% block content %}
-<h2>Logowanie</h2>
+<section class="grid grid--2">
+  <div class="card">
+    <span class="kicker">🔐 Konto</span>
+    <h2 class="card__title" style="margin-top:10px;">Logowanie</h2>
+    <p class="card__subtitle" style="margin-top:8px;">Zaloguj się, żeby zapisywać postęp.</p>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Zaloguj</button>
-</form>
+    <div style="height:14px;"></div>
 
-<p>Nie masz konta? <a href="{% url 'learning:register' %}">Zarejestruj się</a></p>
+    <form method="post" class="form">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="btn btn--primary" type="submit">➡ Zaloguj</button>
+    </form>
+
+    <div style="height:10px;"></div>
+    <p class="card__subtitle">
+      Nie masz konta?
+      <a href="{% url 'learning:register' %}"><strong>Zarejestruj się</strong></a>
+    </p>
+  </div>
+
+  <div class="card">
+    <h3 class="card__title">Co zyskujesz?</h3>
+    <ul class="list" style="margin-top:12px;">
+      <li class="list__item"><div class="list__left"><div class="list__title">Zapis progresu</div><div class="list__meta">ukończone lekcje i wyniki</div></div></li>
+      <li class="list__item"><div class="list__left"><div class="list__title">XP / level</div><div class="list__meta">motywacja do dalszej nauki</div></div></li>
+      <li class="list__item"><div class="list__left"><div class="list__title">Szybki dostęp do kursów</div><div class="list__meta">wszystko w jednym miejscu</div></div></li>
+    </ul>
+  </div>
+</section>
 {% endblock %}

@@ -1,13 +1,38 @@
 {% extends "base.html" %}
 
+{% block title %}Rejestracja — Trollingo{% endblock %}
+
 {% block content %}
-<h2>Rejestracja</h2>
+<section class="grid grid--2">
+  <div class="card">
+    <span class="kicker">🆕 Konto</span>
+    <h2 class="card__title" style="margin-top:10px;">Rejestracja</h2>
+    <p class="card__subtitle" style="margin-top:8px;">Załóż konto i startuj z nauką.</p>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Załóż konto</button>
-</form>
+    <div style="height:14px;"></div>
 
-<p>Masz konto? <a href="{% url 'learning:login' %}">Zaloguj się</a></p>
+    <form method="post" class="form">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="btn btn--primary" type="submit">✅ Załóż konto</button>
+    </form>
+
+    <div style="height:10px;"></div>
+    <p class="card__subtitle">
+      Masz konto?
+      <a href="{% url 'learning:login' %}"><strong>Zaloguj się</strong></a>
+    </p>
+  </div>
+
+  <div class="card">
+    <h3 class="card__title">Tip</h3>
+    <p class="card__subtitle" style="margin-top:10px;">
+      Podaj hasło.
+    </p>
+    <div style="height:12px;"></div>
+    <div class="alert alert--info">
+      Po rejestracji od razu możesz wejść w kursy i robić quizy.
+    </div>
+  </div>
+</section>
 {% endblock %}

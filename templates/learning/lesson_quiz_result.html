@@ -1,27 +1,39 @@
 {% extends "base.html" %}
 
+{% block title %}Wynik quizu — Trollingo{% endblock %}
+
 {% block content %}
-<h2>Quiz ukończony</h2>
+<section class="card">
+  <span class="kicker">🏁 Koniec quizu</span>
+  <h2 class="card__title" style="margin-top:10px;">Quiz ukończony</h2>
 
-<p><strong>Lekcja:</strong> {{ lesson.title }} ({{ lesson.level }})</p>
-<p><strong>Wynik:</strong> {{ score }} / {{ total }}</p>
-<p><strong>XP:</strong> +{{ delta_xp }}</p>
+  <div class="grid grid--2" style="margin-top:14px;">
+    <div class="card" style="background: rgba(255,255,255,.04);">
+      <div class="list__title">Lekcja</div>
+      <div class="list__meta">{{ lesson.title }} ({{ lesson.level }})</div>
+    </div>
+    <div class="card" style="background: rgba(255,255,255,.04);">
+      <div class="list__title">Wynik</div>
+      <div class="list__meta"><strong>{{ score }} / {{ total }}</strong> · XP: <strong>+{{ delta_xp }}</strong></div>
+    </div>
+  </div>
 
-<hr>
+  <div style="height:14px;"></div>
 
-<p>
-    <a href="{% url 'learning:course_detail' lesson.course.pk %}">⬅ Powrót do kursu</a>
-</p>
+  <div class="row">
+    <a class="btn btn--ghost" href="{% url 'learning:course_detail' lesson.course.pk %}">⬅ Powrót do kursu</a>
 
-{% if next_lesson %}
-<p>
-    <a href="{% url 'learning:lesson_detail' next_lesson.pk %}">➡ Następna lekcja</a>
-</p>
-    {% if level_up %}
-    <h3>🎉 Level up! Masz teraz level {{ new_level }}!</h3>
-{% endif %}
+    {% if next_lesson %}
+      <a class="btn btn--primary" href="{% url 'learning:lesson_detail' next_lesson.pk %}">➡ Następna lekcja</a>
+    {% endif %}
+  </div>
 
-{% else %}
-<p><em>To była ostatnia lekcja w tym kursie.</em></p>
-{% endif %}
+  {% if next_lesson and level_up %}
+    <div style="height:12px;"></div>
+    <div class="alert alert--success">🎉 Level up! Masz teraz <strong>level {{ new_level }}</strong>!</div>
+  {% elif not next_lesson %}
+    <div style="height:12px;"></div>
+    <div class="alert alert--info"><em>To była ostatnia lekcja w tym kursie.</em></div>
+  {% endif %}
+</section>
 {% endblock %}

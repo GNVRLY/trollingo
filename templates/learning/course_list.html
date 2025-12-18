@@ -1,22 +1,39 @@
 {% extends "base.html" %}
 
-{% block content %}
-<h2>Courses</h2>
+{% block title %}Kursy — Trollingo{% endblock %}
 
-{% if courses %}
-    <ul>
-        {% for course in courses %}
-            <li>
-                <a href="{% url 'learning:course_detail' course.pk %}">
-                    {{ course.name }}
-                </a>
-                {% if course.description %}
-                    – {{ course.description }}
-                {% endif %}
-            </li>
-        {% endfor %}
+{% block content %}
+<section class="card">
+  <div class="row" style="justify-content:space-between;">
+    <div>
+      <h2 class="card__title">Kursy</h2>
+      <p class="card__subtitle">Wybierz kurs i leć z lekcjami.</p>
+    </div>
+    <a class="btn btn--ghost" href="{% url 'learning:home' %}">🏠 Home</a>
+  </div>
+
+  <div style="height:14px;"></div>
+
+  {% if courses %}
+    <ul class="list">
+      {% for course in courses %}
+        <li class="list__item">
+          <div class="list__left">
+            <a class="list__title" href="{% url 'learning:course_detail' course.pk %}">
+              {{ course.name }}
+            </a>
+            {% if course.description %}
+              <div class="list__meta">{{ course.description }}</div>
+            {% else %}
+              <div class="list__meta">Brak opisu</div>
+            {% endif %}
+          </div>
+          <a class="btn btn--primary" href="{% url 'learning:course_detail' course.pk %}">Otwórz</a>
+        </li>
+      {% endfor %}
     </ul>
-{% else %}
-    <p>No courses yet.</p>
-{% endif %}
+  {% else %}
+    <div class="alert alert--info">Brak kursów.</div>
+  {% endif %}
+</section>
 {% endblock %}
