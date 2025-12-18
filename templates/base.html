@@ -1,50 +1,113 @@
+{% load static %}
 <!doctype html>
-<html lang="en">
+<html lang="pl">
 <head>
-    <meta charset="utf-8">
-    <title>Trollingo</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Trollingo{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/trollingo.css' %}">
 </head>
+
 <body>
-<header>
-    <h1><a href="{% url 'learning:home' %}">Trollingo</a></h1>
+<header class="topbar">
+  <div class="container topbar__inner">
+    <a class="brand" href="{% url 'learning:home' %}">
+      <span class="brand__logo">🦉</span>
+      <span class="brand__name">Trollingo</span>
+    </a>
 
-    {% if user.is_authenticated %}
-        <div>
-            Zalogowany jako <strong>{{ user.username }}</strong>
-            | Level: <strong>{{ user.profile.level }}</strong>
-            | XP: <strong>{{ user.profile.xp }}</strong>
+    <nav class="nav">
+      <a class="nav__link" href="{% url 'learning:course_list' %}">Kursy</a>
+
+      <div class="nav__spacer"></div>
+
+      {% if request.user.is_authenticated %}
+
+        <div class="xp">
+          <div class="xp__label">Lv {{ xp_level|default:1 }}</div>
+          <div class="xp__bar" title="Progres XP do kolejnego levela">
+            <div class="xp__fill" style="width: {{ xp_percent|default:0 }}%;"></div>
+          </div>
+          <div class="xp__value">
+            {{ xp_in_level|default:0 }}/100 ({{ xp_total|default:0 }} XP)
+          </div>
         </div>
 
-        <div style="margin-top: 8px; max-width: 320px;">
-            <div style="font-size: 12px;">
-                {{ user.profile.xp_in_level }}/100 XP (do następnego: {{ user.profile.xp_to_next_level }})
-            </div>
+        <div class="user-menu" data-user-menu>
+          <button class="user-menu__btn" type="button" data-user-menu-btn aria-expanded="false">
+            👤 {{ request.user.username }}
+          </button>
 
-            <div style="border: 1px solid #333; height: 14px; width: 100%; margin-top: 4px;">
-                <div style="height: 14px; width: {{ user.profile.xp_progress_percent }}%; background: #2ecc71;"></div>
-            </div>
+          <div class="user-menu__dropdown" data-user-menu-dd>
+            <form method="post" action="{% url 'learning:logout' %}?next={% url 'learning:home' %}">
+              {% csrf_token %}
+              <button type="submit">Wyloguj</button>
+            </form>
+          </div>
         </div>
 
-        <p><a href="{% url 'learning:logout' %}">Wyloguj</a></p>
-    {% else %}
-        <p>
-            <a href="{% url 'learning:login' %}">Zaloguj się</a> |
-            <a href="{% url 'learning:register' %}">Załóż konto</a>
-        </p>
-    {% endif %}
-
-    <hr>
+      {% else %}
+        <a class="btn btn--ghost" href="{% url 'learning:login' %}">Zaloguj</a>
+        <a class="btn btn--primary" href="{% url 'learning:register' %}">Załóż konto</a>
+      {% endif %}
+    </nav>
+  </div>
 </header>
-<main>
-    {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
 
-    {% block content %}{% endblock %}
+<main class="container">
+  {% if messages %}
+    <div class="stack stack--sm">
+      {% for message in messages %}
+        <div class="alert {% if message.tags %}alert--{{ message.tags }}{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% block content %}{% endblock %}
 </main>
+
+<footer class="footer">
+  <div class="container footer__inner">
+    <span>© {% now "Y" %} Trollingo</span>
+    <span class="footer__muted">Nauka przez lekcje i quizy</span>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    const menu = document.querySelector("[data-user-menu]");
+    if (!menu) return;
+
+    const btn = menu.querySelector("[data-user-menu-btn]");
+    const dd = menu.querySelector("[data-user-menu-dd]");
+
+    function closeMenu() {
+      menu.classList.remove("is-open");
+      btn.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleMenu() {
+      const isOpen = menu.classList.toggle("is-open");
+      btn.setAttribute("aria-expanded", String(isOpen));
+    }
+
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleMenu();
+    });
+
+    dd.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
+
+    document.addEventListener("click", closeMenu);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeMenu();
+    });
+  })();
+</script>
+
 </body>
 </html>

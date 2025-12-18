@@ -1,35 +1,60 @@
 {% extends "base.html" %}
 {% load extras %}
 
+{% block title %}{{ course.name }} — Trollingo{% endblock %}
+
 {% block content %}
-<h2>{{ course.name }}</h2>
+<section class="card">
+  <div class="row" style="justify-content:space-between;">
+    <div>
+      <span class="kicker">📚 Kurs</span>
+      <h2 class="card__title" style="margin-top:10px;">{{ course.name }}</h2>
+      {% if course.description %}
+        <p class="card__subtitle" style="margin-top:8px;">{{ course.description }}</p>
+      {% endif %}
+    </div>
+    <a class="btn btn--ghost" href="{% url 'learning:course_list' %}">⬅ Wróć</a>
+  </div>
 
-{% if course.description %}
-    <p>{{ course.description }}</p>
-{% endif %}
+  <div style="height:16px;"></div>
 
-<h3>Lessons by level</h3>
+  <h3 class="card__title" style="font-size:18px;">Lekcje wg poziomu</h3>
 
-{% regroup course.lessons.all by level as levels %}
+  {% regroup course.lessons.all by level as levels %}
 
-{% for group in levels %}
-    <h4>{{ group.grouper }}</h4>
-    <ul>
-        {% for lesson in group.list %}
-            <li>
-                <a href="{% url 'learning:lesson_detail' lesson.pk %}">
-                    {{ lesson.order }}. {{ lesson.title }}
+  <div class="stack">
+    {% for group in levels %}
+      <div class="card" style="padding:14px;">
+        <div class="row" style="justify-content:space-between;">
+          <div>
+            <div class="list__title">Poziom: {{ group.grouper }}</div>
+            <div class="list__meta">Wybierz lekcję i zrób quiz.</div>
+          </div>
+          <span class="badge badge--warn">LEVEL</span>
+        </div>
+
+        <div style="height:10px;"></div>
+
+        <ul class="list">
+          {% for lesson in group.list %}
+            <li class="list__item">
+              <div class="list__left">
+                <a class="list__title" href="{% url 'learning:lesson_detail' lesson.pk %}">
+                  {{ lesson.order }}. {{ lesson.title }}
                 </a>
+                <div class="list__meta">Kliknij, żeby wejść w lekcję</div>
+              </div>
 
-                {% if progress_map and lesson.id in progress_map %}
-                    <span style="color: green; font-weight: bold;">
-                        ✔ ukończono ({{ progress_map|get_score:lesson.id }} pkt)
-                    </span>
-                {% endif %}
+              {% if progress_map and lesson.id in progress_map %}
+                <span class="badge badge--ok">✔ ukończono ({{ progress_map|get_score:lesson.id }} pkt)</span>
+              {% else %}
+                <a class="btn btn--primary" href="{% url 'learning:lesson_detail' lesson.pk %}">Start</a>
+              {% endif %}
             </li>
-        {% endfor %}
-    </ul>
-{% endfor %}
-
-<a href="{% url 'learning:course_list' %}">Back to courses</a>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endfor %}
+  </div>
+</section>
 {% endblock %}
